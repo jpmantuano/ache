@@ -1,0 +1,22 @@
+Anti-Competitive Behaviour ||| ((antitrust anti competi* anti-competi*) AND (law regulation* acts practice* legislation business* trade compan* firm)) OR (price-fixing price discriminat* monopolization)
+Business Continuity (Bankruptcy) ||| (("business continuity" "risk management") AND (business* compan* corporate* disaster* loss strike* disrupt*)) NOT (bank cyber financ* trade*) NOT (sport* terroris* murder* football homicide rank*)
+Chemical Usage ||| ((chemical substance*) AND (hazardous harm* toxic dangerous)) AND (compan* factor* plants industr*) NOT homocysteine
+Bribery and Corruption ||| ((bribe* corrupt* kickback) AND (compan* enterprise* business)) NOT (government minister political politician "anti-corruption" "corruption trial" "bribery scheme")
+Diversity ||| (workplace employee) AND (discrimination inequality injustice)
+Emissions & Waste Monitoring ||| ((waste emission  discharge) and (monitor monitoring management control disposal) and (compan* factor* industr* oil plant* coal "greenhouse gas emission")) NOT ("investment management" "asset management" dividends stocks acquisition "persent discharge" report analysis "market report" "information report" "analysis report" "market - analysis" "management market" "market analysis" "research analysis" "waste management")
+Export Controls ||| ("export control" "international arms trafficking") (export* AND ("banned country" sanction* contraband smuggling "illegal trafficking" "bootlegging")) NOT "economic sanctions"
+Fraud, Money Laundering, Financial Irregularities ||| (((financ* money embezzlement) AND (irregularities laundering illegal)) AND (fraud individual compan* corporate business* firm*)) NOT (trump government "al capone" "money laundering trial" man "one day course" "money laundering software" bogus con siphon evade)
+Illegal Animal Testing ||| (animal AND (testing experiment*) "vivo testing") NOT (market report analysis)
+Irresponsible Marketing ||| (misleading inaccurate false) AND (marketing representation packag* sales ads advertisement label*)
+Personal Information Mishandling ||| ((personal private) AND (info information data contacts detail) AND leak) NOT (trump hillary voter "personal safety")
+Sustainability ||| (sustainability and (environment* soil water) and (enforcement act* requirement* law development initiativ*)) NOT ("the economist" "kiwi teen" "sustainability champion" "sustainability report" "sustainability advisor" overview award)
+Serious & Organised Crimes ||| (((serious organized) AND crime) NOT stalking) arms trafficking, mafia, underworld, triads, hijacking, terrorist financing, investigated, convicted, sentenced
+Sanctions and Exclusions ||| (sanction* AND (trade compan* business* banned barred)) NOT (putin "north korea")
+Modern-Day Slavery ||| ("modern-day slavery" "modern day slavery" "human trafficking" "child labor" "bonded labor" "forced labor" "child labour" "bonded labour" "forced labour") AND (factory factories industrial warehouse "sweat shop" sweatshop manufacturer)
+Materials Labelling & Handling ||| (((material* substance) AND (hazardous dangerous unsafe)) AND (handl* label* packag* mishandl* mispackag* mislabel*)) AND (factor* industr* plants) NOT train*
+Intellectual Property ||| (("intellectual property" copyright IP) AND (infringement violation breach)) AND (business* compan* organization* firm* enteprise*)
+Health And Safety ||| "safety and health" ((workplace employee) AND (safety accident* injur* condition))
+Product Regulations ||| ((product materials substances) AND (regulation* restrict* banned)) NOT (mlb "PGA Tour" "materials market" grenfell "restricts opportunities")
+Data Security Breaches ||| ("data breach" "data security breach" cyberattack "cyber attack" cybercrime "cyber crime") AND (data AND (management provider warehous* processor hacked))
+Employee Rights ||| ("labor law" "labour law" "employee rights") AND (overtime workplace violation wage termination dismissal salary compensation)
+Environmental Stewardship ||| (environment* AND (preserv* stewardship conservation destruction) OR ("illegal logging" "illegal deforestation")) AND (regulation* development case* incident* sentence* investigat*) NOT ("department of environmental conservation" "student conservation association" "environment analysis" "state dept. of environmental conservation" "course in conservation" "conservation zone" "world environment day" "conservation workshop" "environmental conservation police" "youth environmental stewardship club")

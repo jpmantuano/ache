@@ -1,15 +1,15 @@
 # (Transport client ES)
 target_storage.data_format.type: ELASTICSEARCH
-#target_storage.data_format.elasticsearch.host: localhost
-#target_storage.data_format.elasticsearch.port: 9310
+target_storage.data_format.elasticsearch.host: localhost
+target_storage.data_format.elasticsearch.port: 9310
 #target_storage.data_format.elasticsearch.cluster_name: isabella
 
 # (REST client ES 1.x and 5.x)
-target_storage.data_format.elasticsearch.rest.hosts:
-  - http://localhost:9210
-target_storage.data_format.elasticsearch.rest.connect_timeout: 30000
-target_storage.data_format.elasticsearch.rest.socket_timeout: 30000
-target_storage.data_format.elasticsearch.rest.max_retry_timeout_millis: 90000
+#target_storage.data_format.elasticsearch.rest.hosts:
+#  - http://localhost:9210
+#target_storage.data_format.elasticsearch.rest.connect_timeout: 30000
+#target_storage.data_format.elasticsearch.rest.socket_timeout: 30000
+#target_storage.data_format.elasticsearch.rest.max_retry_timeout_millis: 90000
 
 # Store pages classified as irrelevant pages by the target page classifier
 target_storage.store_negative_pages: true
@@ -20,10 +20,13 @@ target_storage.hard_focus: false
 
 # Limit the max number of pages crawled per domain, in order to avoid crawling
 # too many pages from same somain and favor discovery o new domains
-link_storage.max_pages_per_domain: 100
+link_storage.max_pages_per_domain: 10000
 
 # Disable "seed scope" to allow crawl pages from any domain
 link_storage.link_strategy.use_scope: true
+
+# Discovery of new links using sitemap.xml protocol
+link_storage.download_sitemap_xml: true
 
 # Set initial link classifier a simple one
 link_storage.link_classifier.type: LinkClassifierBaseline
@@ -34,10 +37,10 @@ link_storage.link_classifier.type: LinkClassifierBaseline
 # irrelevant content.
 link_storage.online_learning.enabled: true
 link_storage.online_learning.type: FORWARD_CLASSIFIER_BINARY
-link_storage.online_learning.learning_limit: 1000
+link_storage.online_learning.learning_limit: 5000
 
 # Allways select top-k links with highest priority to be scheduled
-link_storage.link_selector: TopkLinkSelector
+link_storage.link_selector: MaximizeWebsitesLinkSelector
 
 # Configure the minimum time interval (in milliseconds) to wait between requests
 # to the same host to avoid overloading servers. If you are crawling your own

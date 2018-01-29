@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.net.InternetDomainName;
 
@@ -18,6 +19,7 @@ public class TargetModelElasticSearch {
 
 	private String domain;
 	private String url;
+	private String host;
 	private String title;
 	private String text;
 	private Date retrieved;
@@ -29,8 +31,7 @@ public class TargetModelElasticSearch {
 	private String isRelevant;
 	private double relevance;
 
-	private String readabilityOuterHtml;
-	private String readabilityInnerHtml;
+	private Set<String> category;
 
 	public TargetModelElasticSearch() {
 		// mandatory for object unserialization
@@ -38,26 +39,32 @@ public class TargetModelElasticSearch {
 
 	public TargetModelElasticSearch(Page page) {
 		this.url = page.getURL().toString();
+		this.host = page.getURL().getProtocol().concat("://").concat(page.getURL().getHost()).concat("/");
 		this.retrieved = new Date();
 		this.domain = page.getDomainName();
-		// this.html = page.getContentAsString();
+		this.html = page.getContentAsString();
 
 		this.responseHeaders = page.getResponseHeaders();
 		this.topPrivateDomain = LinkRelevance.getTopLevelDomain(page.getDomainName());
 		this.isRelevant = page.getTargetRelevance().isRelevant() ? "relevant" : "irrelevant";
 		if (page.isHtml()) {
-			this.words = page.getParsedData().getWords();
-			this.wordsMeta = page.getParsedData().getWordsMeta();
-			this.title = page.getParsedData().getTitle();
-			this.relevance = page.getTargetRelevance().getRelevance();
 			try {
 				Readability readability = new Readability(page.getContentAsString());
 				readability.init();
+				this.words = page.getParsedData().getWords();
+				this.wordsMeta = page.getParsedData().getWordsMeta();
+				this.title = page.getParsedData().getTitle();
 
 				this.text = DefaultExtractor.getInstance().getText(readability.html());
+
+				// this.html = readability.html();
 			} catch (BoilerpipeProcessingException | ArrayIndexOutOfBoundsException e) {
 				this.text = "";
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
+
+			this.relevance = page.getTargetRelevance().getRelevance();
 		}
 	}
 
@@ -74,7 +81,7 @@ public class TargetModelElasticSearch {
 		Page page = new Page(url, rawContent);
 		page.setParsedData(new ParsedData(new PaginaURL(url, rawContent)));
 
-		this.html = rawContent;
+		// this.html = rawContent;
 		this.url = model.url;
 		this.retrieved = new Date(model.timestamp * 1000);
 		this.words = page.getParsedData().getWords();
@@ -110,6 +117,14 @@ public class TargetModelElasticSearch {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	public String getHost() {
+		return host;
+	}
+
+	public void setHost(String host) {
+		this.host = host;
 	}
 
 	public String getText() {
@@ -160,14 +175,6 @@ public class TargetModelElasticSearch {
 		this.topPrivateDomain = topPrivateDomain;
 	}
 
-	public String getHtml() {
-		return html;
-	}
-
-	public void setHtml(String html) {
-		this.html = html;
-	}
-
 	public String getIsRelevant() {
 		return isRelevant;
 	}
@@ -184,20 +191,20 @@ public class TargetModelElasticSearch {
 		this.relevance = relevance;
 	}
 
-	public String getReadabilityOuterHtml() {
-		return readabilityOuterHtml;
+	public Set<String> getCategory() {
+		return category;
 	}
 
-	public void setReadabilityOuterHtml(String readabilityOuterHtml) {
-		this.readabilityOuterHtml = readabilityOuterHtml;
+	public void setCategory(Set<String> category) {
+		this.category = category;
 	}
 
-	public String getReadabilityInnerHtml() {
-		return readabilityInnerHtml;
+	public String getHtml() {
+		return html;
 	}
 
-	public void setReadabilityInnerHtml(String readabilityInnerHtml) {
-		this.readabilityInnerHtml = readabilityInnerHtml;
+	public void setHtml(String html) {
+		this.html = html;
 	}
 
 }
