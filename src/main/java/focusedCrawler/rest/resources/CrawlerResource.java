@@ -78,15 +78,15 @@ public class CrawlerResource {
             crawlersManager.startCrawl(crawlerId);
 
             return ImmutableMap.of(
-                "message", "Crawler started successfully.",
-                "crawlerStarted", true);
+                    "message", "Crawler started successfully.",
+                    "crawlerStarted", true);
 
         } catch (Exception e) {
             logger.error("Failed to start crawler.", e);
             response.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return ImmutableMap.of(
-                "message", "Failed to start crawler.",
-                "crawlerStarted", false);
+                    "message", "Failed to start crawler.",
+                    "crawlerStarted", false);
         }
     };
 
@@ -124,9 +124,9 @@ public class CrawlerResource {
             logger.error("Failed to stop crawler.", e);
             response.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return ImmutableMap.of(
-                "message", "Failed to stop crawler.",
-                "shutdownInitiated", false,
-                "crawlerStopped", false);
+                    "message", "Failed to stop crawler.",
+                    "shutdownInitiated", false,
+                    "crawlerStopped", false);
         }
     };
 
@@ -138,31 +138,31 @@ public class CrawlerResource {
             if (context == null) {
                 response.status(HttpServletResponse.SC_NOT_FOUND);
                 return ImmutableMap.of(
-                    "message", "Crawler not found for crawler_id " + crawlerId,
-                    "addedSeeds", false);
+                        "message", "Crawler not found for crawler_id " + crawlerId,
+                        "addedSeeds", false);
             }
 
             AddSeedsParams params = json.readValue(request.body(), AddSeedsParams.class);
             if (params.seeds == null || params.seeds.isEmpty()) {
                 response.status(HttpServletResponse.SC_BAD_REQUEST);
                 return ImmutableMap.of(
-                    "message", "No seeds provided.",
-                    "addedSeeds", false);
+                        "message", "No seeds provided.",
+                        "addedSeeds", false);
             }
 
             AsyncCrawler crawler = context.getCrawler();
             crawler.addSeeds(params.seeds);
 
             return ImmutableMap.of(
-                "message", "Seeds added successfully.",
-                "addedSeeds", true);
+                    "message", "Seeds added successfully.",
+                    "addedSeeds", true);
 
         } catch (Exception e) {
             logger.error("Failed to add seeds.", e);
             response.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return ImmutableMap.of(
-                "message", "Failed to add seeds.",
-                "addedSeeds", false);
+                    "message", "Failed to add seeds.",
+                    "addedSeeds", false);
         }
     };
 
@@ -179,7 +179,8 @@ public class CrawlerResource {
 
         try {
             HashMap<String, List<Cookie>> params = json.readValue(request.body(),
-                    new TypeReference<HashMap<String, List<Cookie>>>() {});
+                    new TypeReference<HashMap<String, List<Cookie>>>() {
+                    });
 
             if (params == null || params.isEmpty()) {
                 response.status(HttpServletResponse.SC_BAD_REQUEST);
@@ -202,7 +203,7 @@ public class CrawlerResource {
                     "addedCookies", false);
         }
     };
-    
+
     private Optional<Boolean> getParamAsBoolean(String paramName, Request request) {
         try {
             Boolean valueOf = Boolean.valueOf(request.queryParams(paramName));
@@ -215,6 +216,8 @@ public class CrawlerResource {
     public static class StartCrawlParams {
         public CrawlType crawlType;
         public List<String> seeds;
+        public List<String> blacklist;
+        public List<String> whitelist;
         public byte[] model;
         public String esTypeName;
         public String esIndexName;
@@ -223,6 +226,6 @@ public class CrawlerResource {
     public static class AddSeedsParams {
         public List<String> seeds;
     }
-    
+
 
 }

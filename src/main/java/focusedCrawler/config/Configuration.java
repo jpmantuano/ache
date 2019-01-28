@@ -24,6 +24,7 @@ import focusedCrawler.target.TargetStorageConfig;
 public class Configuration {
 
     private static final ObjectMapper yamlMapper = new ObjectMapper(new YAMLFactory());
+
     static {
         yamlMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
@@ -36,7 +37,6 @@ public class Configuration {
     private AsyncCrawlerConfig crawlerConfig;
     @JsonUnwrapped
     private RestConfig restConfig;
-
 
     public Configuration(String configPath) {
         this(Paths.get(configPath));
@@ -60,7 +60,7 @@ public class Configuration {
         try {
             init(yamlMapper.valueToTree(configMap));
         } catch (IllegalArgumentException | IOException e) {
-            throw new IllegalArgumentException("Could not read settings from map: "+configMap, e);
+            throw new IllegalArgumentException("Could not read settings from map: " + configMap, e);
         }
     }
 
@@ -109,7 +109,7 @@ public class Configuration {
             throw new RuntimeException("Failed to create new configuration.", e);
         }
     }
-    
+
     /**
      * Replaces the values from the source node into the nodeToBeUpdated.
      */
@@ -157,7 +157,7 @@ public class Configuration {
      */
     public Configuration copy() throws IOException {
         JsonNode treeCopy = yamlMapper.valueToTree(this).deepCopy();
-        return yamlMapper.treeToValue(treeCopy,  Configuration.class);
+        return yamlMapper.treeToValue(treeCopy, Configuration.class);
     }
 
     /**

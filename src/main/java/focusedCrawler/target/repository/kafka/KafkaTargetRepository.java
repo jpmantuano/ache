@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.Map.Entry;
 import java.util.Properties;
 
+import focusedCrawler.target.model.TargetModelKafka;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -50,7 +51,7 @@ public class KafkaTargetRepository implements TargetRepository {
 
     private static Producer<String, String> createKafkaClient(KafkaConfig config) {
         Properties props = new Properties();
-        
+
         // set default properties for ACHE
         props.put("bootstrap.servers", "localhost:9092");
         props.put("acks", "all");
@@ -94,6 +95,9 @@ public class KafkaTargetRepository implements TargetRepository {
                 break;
             case ELASTIC:
                 value = serializeAsJson(new TargetModelElasticSearch(page));
+                break;
+            case KAFKA:
+                value = serializeAsJson(new TargetModelKafka(page));
                 break;
             default:
                 value = serializeAsJson(new TargetModelJson(page));
