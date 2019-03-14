@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class KafkaConfig {
 
     enum Format {
-        CDR31, JSON, ELASTIC
+        CDR31, JSON, ELASTIC, KAFKA
     }
 
     @JsonProperty("target_storage.data_format.kafka.topic_name")

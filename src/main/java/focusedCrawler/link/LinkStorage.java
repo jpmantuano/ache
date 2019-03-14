@@ -59,7 +59,7 @@ public class LinkStorage {
         this.insertSiteMaps = config.getDownloadSitemapXml();
     }
 
-    public void close(){
+    public void close() {
         logger.info("Shutting down FrontierManager...");
         this.frontierManager.close();
         logger.info("done.");
@@ -67,19 +67,16 @@ public class LinkStorage {
 
     /**
      * This method inserts links from a given page into the frontier
-     * 
-     * @param obj
-     *            Object - page containing links
+     *
+     * @param obj Object - page containing links
      * @return Object
      */
     public Object insert(Object obj) throws StorageException {
-        if(obj instanceof Page) {
+        if (obj instanceof Page) {
             return insert((Page) obj);
-        } 
-        else if(obj instanceof RobotsTxtHandler.RobotsData) {
+        } else if (obj instanceof RobotsTxtHandler.RobotsData) {
             insert((RobotsTxtHandler.RobotsData) obj);
-        }
-        else if(obj instanceof SitemapXmlHandler.SitemapData) {
+        } else if (obj instanceof SitemapXmlHandler.SitemapData) {
             insert((SitemapXmlHandler.SitemapData) obj);
         }
         return null;
@@ -99,28 +96,28 @@ public class LinkStorage {
             }
         }
     }
-    
+
     public void insert(SitemapXmlHandler.SitemapData sitemapData) {
         for (String link : sitemapData.links) {
             try {
                 frontierManager.insert(LinkRelevance.createForward(link, 1.0d));
             } catch (Exception e) {
-                logger.error("Failed to insert link into the frontier: "+link, e);
+                logger.error("Failed to insert link into the frontier: " + link, e);
             }
         }
         logger.info("Added {} URLs from sitemap.", sitemapData.links.size());
-        
+
         for (String sitemap : sitemapData.sitemaps) {
             try {
                 frontierManager.insert(LinkRelevance.createSitemap(sitemap, 299));
             } catch (Exception e) {
-                logger.error("Failed to insert sitemap into the frontier: "+sitemap);
+                logger.error("Failed to insert sitemap into the frontier: " + sitemap);
             }
         }
         logger.info("Added {} child sitemaps.", sitemapData.sitemaps.size());
     }
-    
-    
+
+
     public Object insert(Page page) throws StorageException {
         try {
             if (getBacklinks && page.isAuth()) {
@@ -140,7 +137,7 @@ public class LinkStorage {
             if (onlineLearning != null) {
                 onlineLearning.notifyPageCrawled(page);
             }
-            
+
         } catch (Exception ex) {
             logger.info("Failed to insert page into LinkStorage.", ex);
             throw new StorageException(ex.getMessage(), ex);
@@ -150,7 +147,8 @@ public class LinkStorage {
 
     /**
      * This method sends a link to crawler
-     * @throws DataNotFoundException 
+     *
+     * @throws DataNotFoundException
      */
     public synchronized Object select(Object obj) throws StorageException, DataNotFoundException {
         try {
@@ -161,17 +159,17 @@ public class LinkStorage {
     }
 
     public static LinkStorage create(String configPath, String seedFile, String dataPath,
-            String modelPath, LinkStorageConfig config, MetricsManager metricsManager)
+                                     String modelPath, LinkStorageConfig config, MetricsManager metricsManager)
             throws FrontierPersistentException, IOException {
-        
+
         Path stoplistPath = Paths.get(configPath, "/stoplist.txt");
         StopList stoplist;
-        if(Files.exists(stoplistPath)) {
+        if (Files.exists(stoplistPath)) {
             stoplist = new StopListFile(stoplistPath.toFile().getCanonicalPath());
         } else {
             stoplist = StopListFile.DEFAULT;
         }
-        
+
         LinkClassifierFactory.setDefaultStoplist(stoplist);
 
         FrontierManager frontierManager = FrontierManagerFactory.create(config, configPath,
@@ -180,9 +178,36 @@ public class LinkStorage {
         OnlineLearning onlineLearning = null;
         if (config.isUseOnlineLearning()) {
             onlineLearning = createOnlineLearning(dataPath, config, stoplist, frontierManager);
-            
+
         }
-        
+
+        return new LinkStorage(config, frontierManager, onlineLearning);
+    }
+
+    public static LinkStorage create(String configPath, String seedFile, String dataPath,
+                                     String modelPath, List<String> whitelist, List<String> blacklist,
+                                     LinkStorageConfig config, MetricsManager metricsManager)
+            throws FrontierPersistentException, IOException {
+
+        Path stoplistPath = Paths.get(configPath, "/stoplist.txt");
+        StopList stoplist;
+        if (Files.exists(stoplistPath)) {
+            stoplist = new StopListFile(stoplistPath.toFile().getCanonicalPath());
+        } else {
+            stoplist = StopListFile.DEFAULT;
+        }
+
+        LinkClassifierFactory.setDefaultStoplist(stoplist);
+
+        FrontierManager frontierManager = FrontierManagerFactory.create(config, configPath,
+                dataPath, modelPath, whitelist, blacklist, seedFile, metricsManager);
+
+        OnlineLearning onlineLearning = null;
+        if (config.isUseOnlineLearning()) {
+            onlineLearning = createOnlineLearning(dataPath, config, stoplist, frontierManager);
+
+        }
+
         return new LinkStorage(config, frontierManager, onlineLearning);
     }
 
@@ -214,11 +239,10 @@ public class LinkStorage {
 
     /**
      * Inserts the robot rules object into the HashMap
-     * 
+     *
      * @param link
      * @param robotRules
-     * @throws NullPointerException
-     *             when either of the argument is null
+     * @throws NullPointerException when either of the argument is null
      */
     public void insertRobotRules(LinkRelevance link, SimpleRobotRules robotRules) {
         if (link == null || robotRules == null) {

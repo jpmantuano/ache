@@ -201,5 +201,4 @@ public class Frontier {
         SimpleRobotRules rules = robotRulesMap.get(hostname);
         return rules != null && !rules.isAllowed(link.getURL().toString());
     }
-
 }
