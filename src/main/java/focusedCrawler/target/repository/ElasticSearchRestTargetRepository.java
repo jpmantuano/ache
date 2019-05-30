@@ -1,44 +1,37 @@
 package focusedCrawler.target.repository;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.common.collect.ImmutableMap;
+import focusedCrawler.target.model.Page;
+import focusedCrawler.target.model.TargetModelElasticSearch;
+import focusedCrawler.target.repository.elasticsearch.ElasticSearchConfig;
+import focusedCrawler.util.CloseableIterator;
 import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.entity.AbstractHttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
-import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.google.common.collect.ImmutableMap;
-
-import focusedCrawler.target.model.Page;
-import focusedCrawler.target.model.TargetModelElasticSearch;
-import focusedCrawler.target.repository.elasticsearch.ElasticSearchConfig;
-import focusedCrawler.util.CloseableIterator;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.*;
 
 public class ElasticSearchRestTargetRepository implements TargetRepository {
-    
+
     private static final Map<String, String> EMPTY_MAP = Collections.<String, String>emptyMap();
     private static final Logger logger = LoggerFactory.getLogger(ElasticSearchRestTargetRepository.class);
     private static final ObjectMapper mapper = new ObjectMapper();
-    
+
     static {
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
@@ -46,7 +39,7 @@ public class ElasticSearchRestTargetRepository implements TargetRepository {
     private RestClient client;
     private String typeName;
     private String indexName;
-    
+
     public ElasticSearchRestTargetRepository(ElasticSearchConfig config) {
         this.indexName = config.getIndexName();
         this.typeName = config.getTypeName();
@@ -64,8 +57,8 @@ public class ElasticSearchRestTargetRepository implements TargetRepository {
         // We use upsert to avoid overriding existing fields in previously indexed documents
         String endpoint = String.format("/%s/%s/%s/_update", indexName, typeName, docId);
         Map<String, ?> body = ImmutableMap.of(
-            "doc", document,
-            "doc_as_upsert", true
+                "doc", document,
+                "doc_as_upsert", true
         );
         AbstractHttpEntity entity = createJsonEntity(serializeAsJson(body));
         try {
@@ -80,7 +73,7 @@ public class ElasticSearchRestTargetRepository implements TargetRepository {
         try {
             return URLEncoder.encode(url, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            throw new IllegalStateException("Failed to URL encode string: "+url, e);
+            throw new IllegalStateException("Failed to URL encode string: " + url, e);
         }
     }
 
@@ -109,20 +102,20 @@ public class ElasticSearchRestTargetRepository implements TargetRepository {
         }
 
         HttpHost[] httpHostsArray = (HttpHost[]) hosts.toArray(new HttpHost[hosts.size()]);
-        
+
         client = RestClient.builder(httpHostsArray)
-            .setRequestConfigCallback(new RestClientBuilder.RequestConfigCallback() {
-                @Override
-                public RequestConfig.Builder customizeRequestConfig(RequestConfig.Builder requestConfigBuilder) {
-                    return requestConfigBuilder
-                            .setConnectTimeout(config.getRestConnectTimeout())
-                            .setSocketTimeout(config.getRestSocketTimeout());
-                }
-            })
-            .setMaxRetryTimeoutMillis(config.getRestMaxRetryTimeoutMillis())
-            .build();
-        
-        logger.info("Initialized Elasticsearch REST client for hosts: "+Arrays.toString(httpHostsArray));
+                .setRequestConfigCallback(new RestClientBuilder.RequestConfigCallback() {
+                    @Override
+                    public RequestConfig.Builder customizeRequestConfig(RequestConfig.Builder requestConfigBuilder) {
+                        return requestConfigBuilder
+                                .setConnectTimeout(config.getRestConnectTimeout())
+                                .setSocketTimeout(config.getRestSocketTimeout());
+                    }
+                })
+                .setMaxRetryTimeoutMillis(config.getRestMaxRetryTimeoutMillis())
+                .build();
+
+        logger.info("Initialized Elasticsearch REST client for hosts: " + Arrays.toString(httpHostsArray));
         return client;
     }
 
