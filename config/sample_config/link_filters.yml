@@ -1,0 +1,12 @@
+global:
+  type: wildcard
+  whitelist:
+  blacklist:
+    - "*entertainment*"
+    - "*liesure*"
+    - "*lifestyle*"
+    - "*sports*"
+    - "*food*"
+    - "*refresh*"
+    - "*science*"
+    - "*health*"
